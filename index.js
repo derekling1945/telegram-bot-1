@@ -44,6 +44,7 @@ const newWife = {
     ['做野啫']
   ],
   stickers: [
+    'CAACAgQAAxkBAAIBXl6qRkUFRJ9rC0I9s1fEJ2H_8a2tAAJ6AAPOOQgNrUU4I9lPhJ4ZBA',
     'CAACAgUAAxkBAAMhXqndhC_2F7CkKV1pD7b2hPnR77IAAh8MAALJ8ckCZq2EQGRCmUoZBA',
     'CAACAgUAAxkBAAN2Xqnx0ZmGYR0UzBIV3dJ4Rnbvd7YAAiAMAALJ8ckCn_DTTYMFAAE6GQQ'
   ]
@@ -58,6 +59,27 @@ const brotherInLaw = {
   replies: [
     ['因為我都未收到payme'],
     ['PayMe plz', '小龍已經pay左']
+  ],
+  stickers: [
+    'CAACAgQAAxkBAAIBXl6qRkUFRJ9rC0I9s1fEJ2H_8a2tAAJ6AAPOOQgNrUU4I9lPhJ4ZBA',
+    'CAACAgUAAxkBAAMhXqndhC_2F7CkKV1pD7b2hPnR77IAAh8MAALJ8ckCZq2EQGRCmUoZBA',
+    'CAACAgUAAxkBAAN2Xqnx0ZmGYR0UzBIV3dJ4Rnbvd7YAAiAMAALJ8ckCn_DTTYMFAAE6GQQ'
+  ],
+  sender: [
+    'ktse02'
+  ]
+}
+
+// 坑老闆 ------------------------------------
+const hangBoss = {
+  query: [
+    '一億',
+    '發大財'
+  ],
+  replies: [
+    ['無啦', '我好窮'],
+    ['無啦', '我無cash'],
+    ['Cash重要啲', '巿值呢d野垃圾黎']
   ],
   stickers: [
     'CAACAgUAAxkBAAMiXqndhkAzau5Bcuow75c60-RghBQAAiAMAALJ8ckCn_DTTYMFAAE6GQQ'
@@ -91,9 +113,12 @@ const hangSister = {
   ],
   replies: [
     ['Marked'],
-    ['Marked']
+    ['marked']
   ],
-  stickers: []
+  stickers: [],
+  senderToExclude: [
+    'khchanaq'
+  ]
 
 }
 
@@ -112,11 +137,34 @@ const agger = {
   stickers: []
 }
 
+// 肥坑 ------------------------------------
+const mentionHang = {
+  query: [
+    '肥坑'
+  ],
+  replies: [],
+  stickers: [
+    'CAACAgQAAxkBAAIBXl6qRkUFRJ9rC0I9s1fEJ2H_8a2tAAJ6AAPOOQgNrUU4I9lPhJ4ZBA'
+  ]
+}
+
+// 肥坑 send message ------------------------------------
+const hangSendMessage = {
+  query: [],
+  replies: [
+    ['個bot幫我答咗']
+  ],
+  stickers: [],
+  sender: [
+    'khchanaq'
+  ]
+}
+
 const msgLag = 2000;
 
 bot.on('message', (msg) => {
-  // console.log(msg);
-  if (msg.from.username === 'ktse02' && brotherInLaw.query.some((query) => msg.text.toString().toLowerCase().split(' ').join('').includes(query))) {
+  console.log(msg.from.username === 'deutlich');
+  if (brotherInLaw.sender.some((sender) => msg.from.username === sender) && brotherInLaw.query.some((query) => msg.text.toString().toLowerCase().split(' ').join('').includes(query))) {
     const stickerToSend = getRandomMessage(brotherInLaw.stickers);
     sendStickerDelay(stickerToSend, msg.chat.id, msg.message_id);
 
@@ -133,6 +181,13 @@ bot.on('message', (msg) => {
     sendMessageDelay(msgToSend, msg.chat.id);
   }
 
+  else if (hangBoss.query.some((query) => msg.text.toString().toLowerCase().split(' ').join('').includes(query))) {
+    const stickerToSend = getRandomMessage(hangBoss.stickers);
+    sendStickerDelay(stickerToSend, msg.chat.id, msg.message_id);
+    
+    const msgToSend = getRandomMessage(hangBoss.replies);
+    sendMessageDelay(msgToSend, msg.chat.id);
+  }
   
 
   else if (giveBirth.query.some((query) => msg.text.toString().toLowerCase().split(' ').join('').includes(query))) {
@@ -145,14 +200,21 @@ bot.on('message', (msg) => {
     
   }
 
-  else if (hangSister.query.some((query) => msg.text.toString().toLowerCase().split(' ').join('').includes(query))) {
+  else if (hangSister.senderToExclude.every((sender) => msg.from.username !== sender)  && hangSister.query.some((query) => msg.text.toString().toLowerCase().split(' ').join('').includes(query))) {
     const msgToSend = getRandomMessage(hangSister.replies);
     sendMessageDelay(msgToSend, msg.chat.id, msg.message_id);
   }
 
-  else if (agger.query.some((query) => msg.text.toString().toLowerCase().split(' ').join('').includes(query))) {
-    const msgToSend = getRandomMessage(agger.replies);
-    sendMessageDelay(msgToSend, msg.chat.id);
+  else if (mentionHang.query.some((query) => msg.text.toString().toLowerCase().split(' ').join('').includes(query))) {
+    const stickerToSend = getRandomMessage(mentionHang.stickers);
+    sendStickerDelay(stickerToSend, msg.chat.id, msg.message_id);
+  }
+
+  else if (hangSendMessage.sender.some((sender) => msg.from.username === sender)) {
+    if (Math.random < 0.5) {
+      const msgToSend = getRandomMessage(hangSendMessage.replies);
+      sendMessageDelay(msgToSend, msg.chat.id, msg.message_id);
+    }
   }
 
 
