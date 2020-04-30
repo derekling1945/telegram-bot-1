@@ -3,105 +3,156 @@ const token = '1145722716:AAEvgzIUzKSsD2VxjMxwNxsQDvhAsw8o8N0';
 const bot = new TelegramBot(token, { polling: true });
 
 
-const newWife = [
-  ['無無無', '真心無', '都係個句', 'Me好誠實'],
-  ['唔會啦', 'Me好誠實'],
-  ['無', '不了'],
-  ['唔會啦', '我有女朋友'],
-  ['真心無'],
-  ['做野啫']
-];
+const getRandomMessage = (messagesArray) => messagesArray[Math.floor(Math.random() * messagesArray.length)];
 
-const newWifeStickers = [
-  'CAACAgUAAxkBAAMhXqndhC_2F7CkKV1pD7b2hPnR77IAAh8MAALJ8ckCZq2EQGRCmUoZBA',
-  'CAACAgUAAxkBAAN2Xqnx0ZmGYR0UzBIV3dJ4Rnbvd7YAAiAMAALJ8ckCn_DTTYMFAAE6GQQ'
-]
+const sendMessageDelay = (messageSeries, chatId, senderId) => {
+  if (senderId)
+    messageSeries.forEach( (msgText, i) => {
+      setTimeout( () => {
+        bot.sendMessage(chatId, msgText, { reply_to_message_id: senderId }); 
+      }, (i+2) * msgLag + 0.2* Math.random());
+    });
+  else
+    messageSeries.forEach( (msgText, i) => {
+    setTimeout( () => {
+      bot.sendMessage(chatId, msgText); 
+    }, (i+2) * msgLag + 0.2* Math.random());
+  });
+};
 
-const hangSister = [
-  ['因為我都未收到payme'],
-  ['PayMe plz', '小龍已經pay左']
-];
+const sendStickerDelay = (stickerId, chatId, senderId) => {
+  setTimeout( () => {
+    if (senderId)
+      bot.sendSticker(chatId, stickerId, { reply_to_message_id: senderId });
+    else
+      bot.sendSticker(chatId, stickerId);
+  }, msgLag / 2 + 0.2* Math.random());
+}
 
-const giveBirth = [
-  ['Me生仔'],
-  ['Me生孖仔'],
-  ['女就生硬架啦'],
-  ['老母話想要孫女']
-];
+// 舒華 ------------------------------------
+const newWife = {
+  query: [
+    '舒華',
+    '新阿嫂'
+  ],
+  replies: [
+    ['無無無', '真心無', '都係個句', 'Me好誠實'],
+    ['唔會啦', 'Me好誠實'],
+    ['無', '不了'],
+    ['唔會啦', '我有女朋友'],
+    ['真心無'],
+    ['做野啫']
+  ],
+  stickers: [
+    'CAACAgUAAxkBAAMhXqndhC_2F7CkKV1pD7b2hPnR77IAAh8MAALJ8ckCZq2EQGRCmUoZBA',
+    'CAACAgUAAxkBAAN2Xqnx0ZmGYR0UzBIV3dJ4Rnbvd7YAAiAMAALJ8ckCn_DTTYMFAAE6GQQ'
+  ]
+}
 
-const giveBirthStickers = [
-  'CAACAgUAAxkBAAN1XqnxQzB2isOoslo_B29ELsXjgbcAAuUEAALvoLUBCUtCr7MvwTcZBA',
-  'CAACAgUAAxkBAAN0XqnxQWM8_AOs4mia9lAy9f-y5lEAAtkEAALvoLUBCl7eIFaqEacZBA'
-]
+// 大舅 ------------------------------------
+const brotherInLaw = {
+  query: [
+    '女神',
+    '大舅'
+  ],
+  replies: [
+    ['因為我都未收到payme'],
+    ['PayMe plz', '小龍已經pay左']
+  ],
+  stickers: [
+    'CAACAgUAAxkBAAMiXqndhkAzau5Bcuow75c60-RghBQAAiAMAALJ8ckCn_DTTYMFAAE6GQQ'
+  ]
+}
+
+
+// 生仔 ------------------------------------
+const giveBirth = {
+  query: [
+    '生仔',
+    '生女'
+  ],
+  replies: [
+    ['Me生仔'],
+    ['Me生孖仔'],
+    ['女就生硬架啦'],
+    ['老母話想要孫女']
+  ],
+  stickers: [
+    'CAACAgUAAxkBAAN1XqnxQzB2isOoslo_B29ELsXjgbcAAuUEAALvoLUBCUtCr7MvwTcZBA',
+    'CAACAgUAAxkBAAN0XqnxQWM8_AOs4mia9lAy9f-y5lEAAtkEAALvoLUBCl7eIFaqEacZBA'
+  ]
+
+}
+
+// 坑妹 ------------------------------------
+const hangSister = {
+  query: [
+    '坑妹'
+  ],
+  replies: [
+    ['Marked'],
+    ['Marked']
+  ],
+  stickers: []
+
+}
+
+// 呢個岩 ------------------------------------
+const agger = {
+  query: [
+    'agger',
+    '呢個岩',
+    '呢個真',
+    '得好岩'
+  ],
+  replies: [
+    ['呢個岩'],
+    ['呢個真']
+  ],
+  stickers: []
+}
 
 const msgLag = 2000;
 
 bot.on('message', (msg) => {
   // console.log(msg);
-  if (msg.from.username === "ktse02" && (msg.text.toString().includes("女神") || msg.text.toString().includes("大舅"))) {
+  if (msg.from.username === 'ktse02' && brotherInLaw.query.some((query) => msg.text.toString().toLowerCase().split(' ').join('').includes(query))) {
+    const stickerToSend = getRandomMessage(brotherInLaw.stickers);
+    sendStickerDelay(stickerToSend, msg.chat.id, msg.message_id);
 
-    setTimeout( () => {
-      bot.sendSticker(msg.chat.id, 'CAACAgUAAxkBAAMiXqndhkAzau5Bcuow75c60-RghBQAAiAMAALJ8ckCn_DTTYMFAAE6GQQ', { reply_to_message_id: msg.message_id });
-    }, msgLag / 2 + 0.2* Math.random());
-
-    const msgToSend = hangSister[Math.floor(Math.random() * hangSister.length)];
-    msgToSend.forEach( (msgText, i) => {
-      setTimeout( () => {
-        bot.sendMessage(msg.chat.id, msgText); 
-      }, (i+2) * msgLag + 0.2* Math.random());
-    });
+    const msgToSend = getRandomMessage(brotherInLaw.replies);
+    sendMessageDelay(msgToSend, msg.chat.id);
   }
 
 
-  else if (msg.text.toString().includes("舒華") || msg.text.toString().includes("新阿嫂")) {
-
-    const stickerToSend = newWifeStickers[Math.floor(Math.random() * newWifeStickers.length)];
-    setTimeout( () => {
-      bot.sendSticker(msg.chat.id, stickerToSend, { reply_to_message_id: msg.message_id });
-    }, msgLag / 2 + 0.2* Math.random());
+  else if (newWife.query.some((query) => msg.text.toString().toLowerCase().split(' ').join('').includes(query))) {
+    const stickerToSend = getRandomMessage(newWife.stickers);
+    sendStickerDelay(stickerToSend, msg.chat.id, msg.message_id);
     
-    const msgToSend = newWife[Math.floor(Math.random() * newWife.length)];
-    msgToSend.forEach( (msgText, i) => {
-      setTimeout( () => {
-        bot.sendMessage(msg.chat.id, msgText); 
-      }, (i+2) * msgLag + 0.2* Math.random());
-    });
+    const msgToSend = getRandomMessage(newWife.replies);
+    sendMessageDelay(msgToSend, msg.chat.id);
   }
 
   
 
-  else if (msg.text.toString().includes("生仔") || msg.text.toString().includes("生女") || msg.text.toString().includes("個女")) {
+  else if (giveBirth.query.some((query) => msg.text.toString().toLowerCase().split(' ').join('').includes(query))) {
     
-    const msgToSend = giveBirth[Math.floor(Math.random() * newWife.length)];
-    msgToSend.forEach( (msgText, i) => {
-      setTimeout( () => {
-        bot.sendMessage(msg.chat.id, msgText); 
-      }, (i+2) * msgLag + 0.2* Math.random());
-    });
+    const msgToSend = getRandomMessage(giveBirth.replies);
+    sendMessageDelay(msgToSend, msg.chat.id);
 
-    const stickerToSend = giveBirthStickers[Math.floor(Math.random() * giveBirthStickers.length)];
-    setTimeout( () => {
-      bot.sendSticker(msg.chat.id, stickerToSend);
-    }, msgLag / 2 + 0.2* Math.random());
+    const stickerToSend = getRandomMessage(giveBirth.stickers);
+    sendStickerDelay(stickerToSend, msg.chat.id);
     
   }
 
-  else if (msg.text.toString().includes("坑妹")) {
-
-    setTimeout( () => {
-      bot.sendMessage(msg.chat.id, 'marked', { reply_to_message_id: msg.message_id });
-    }, msgLag / 2 + 0.2* Math.random());
-    
+  else if (hangSister.query.some((query) => msg.text.toString().toLowerCase().split(' ').join('').includes(query))) {
+    const msgToSend = getRandomMessage(hangSister.replies);
+    sendMessageDelay(msgToSend, msg.chat.id, msg.message_id);
   }
 
-  else if (msg.from.username === "sherrybomb") {
-
-    if (Math.random() < 0.2){
-      setTimeout( () => {
-        bot.sendMessage(msg.chat.id, '呢個岩');
-      }, msgLag / 2 + 0.2* Math.random());
-    }
-    
+  else if (agger.query.some((query) => msg.text.toString().toLowerCase().split(' ').join('').includes(query))) {
+    const msgToSend = getRandomMessage(agger.replies);
+    sendMessageDelay(msgToSend, msg.chat.id);
   }
 
 
